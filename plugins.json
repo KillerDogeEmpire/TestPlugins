@@ -1,0 +1,45 @@
+[
+    {
+        "iconUrl": "https://www.google.com/s2/favicons?domain=gogoanime.lu&sz=%size%",
+        "apiVersion": 1,
+        "repositoryUrl": "https://github.com/KillerDogeEmpire/TestPlugins",
+        "fileSize": 27595,
+        "status": 1,
+        "language": "en",
+        "authors": [
+            "Cloudburst, Aryan Invader, KillerDogeEmpire"
+        ],
+        "tvTypes": [
+            "AnimeMovie",
+            "Anime",
+            "OVA"
+        ],
+        "version": 3,
+        "internalName": "AnitakuProvider",
+        "description": "Anime from Anitaku (formerly GoGo Anime)",
+        "url": "https://raw.githubusercontent.com/KillerDogeEmpire/TestPlugins/builds/AnitakuProvider.cs3",
+        "name": "AnitakuProvider"
+    },
+    {
+        "iconUrl": "https://www.google.com/s2/favicons?domain=www.2embed.to&sz=%size%",
+        "apiVersion": 1,
+        "repositoryUrl": "https://github.com/KillerDogeEmpire/TestPlugins",
+        "fileSize": 58390,
+        "status": 1,
+        "language": "en",
+        "authors": [
+            
+        ],
+        "tvTypes": [
+            "TvSeries",
+            "Movie",
+            "Anime",
+            "AnimeMovie"
+        ],
+        "version": 18,
+        "internalName": "HiAnimeProvider",
+        "description": "Due to the video host changing encryption methods extremely often these extensions might not work perfectly. Includes DopeBox, SolarMovie, AniWatch (Zoro) and HDToday",
+        "url": "https://raw.githubusercontent.com/KillerDogeEmpire/TestPlugins/builds/HiAnimeProvider.cs3",
+        "name": "HiAnimeProvider"
+    }
+]
