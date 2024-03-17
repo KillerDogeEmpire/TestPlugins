@@ -7,7 +7,7 @@ cloudstream {
     // All of these properties are optional, you can safely remove them
 
     description = "Anime from Anitaku (formerly GoGo Anime)"
-    authors = listOf("Cloudburst, Aryan Invader")
+    authors = listOf("Cloudburst, Aryan Invader, KillerDogeEmpire")
 
     /**
      * Status int as the following:
