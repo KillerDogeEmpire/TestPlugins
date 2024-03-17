@@ -239,7 +239,7 @@ class AnitakuProvider : MainAPI() {
                 posterUrl = it.selectFirst("img")?.attr("src")
                 year = it.selectFirst(".released")?.text()?.split(":")?.getOrNull(1)?.trim()
                     ?.toIntOrNull()
-                dubStatus = if (it.selectFirst(".name")?.text()?.contains("Dub") == true) {
+                dubStatus = if (it.selectFirst(".name")?.text()?.contains("Dub") == true).replace("(Dub)", "") {
                     EnumSet.of(DubStatus.Dubbed)
                 } else {
                     EnumSet.of(DubStatus.Subbed)
