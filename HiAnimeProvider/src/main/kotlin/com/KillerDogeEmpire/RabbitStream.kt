@@ -1,9 +1,8 @@
-package com.lagradost
+package com.KillerDogeEmpire
 
 import android.util.Log
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.lagradost.cloudstream3.*
-import com.lagradost.cloudstream3.APIHolder.getCaptchaToken
 import com.lagradost.cloudstream3.APIHolder.unixTimeMS
 import com.lagradost.cloudstream3.LoadResponse.Companion.addActors
 import com.lagradost.cloudstream3.LoadResponse.Companion.addDuration
@@ -31,7 +30,7 @@ import javax.crypto.spec.IvParameterSpec
 import javax.crypto.spec.SecretKeySpec
 import kotlin.system.measureTimeMillis
 
-open class SflixProvider : MainAPI() {
+open class RabbitStream : MainAPI() {
     override var mainUrl = "https://sflix.to"
     override var name = "Sflix.to"
 

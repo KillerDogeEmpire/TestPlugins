@@ -1,13 +1,13 @@
 // use an integer for version numbers
-version = 1
+version = 18
 
 
 cloudstream {
     language = "en"
     // All of these properties are optional, you can safely remove them
 
-    //description = "Webview is used to load links, reload if necessary"
-    authors = listOf("Stormunblessed")
+    description = "Due to the video host changing encryption methods extremely often these extensions might not work perfectly. Includes DopeBox, SolarMovie, AniWatch (Zoro) and HDToday"
+    // authors = listOf("Cloudburst")
 
     /**
      * Status int as the following:
@@ -18,9 +18,11 @@ cloudstream {
      * */
     status = 1 // will be 3 if unspecified
     tvTypes = listOf(
+        "TvSeries",
+        "Movie",
         "Anime",
-        "OVA",
+        "AnimeMovie",
     )
 
-    iconUrl = "https://www.google.com/s2/favicons?domain=animension.to&sz=%size%"
+    iconUrl = "https://www.google.com/s2/favicons?domain=www.2embed.to&sz=%size%"
 }
