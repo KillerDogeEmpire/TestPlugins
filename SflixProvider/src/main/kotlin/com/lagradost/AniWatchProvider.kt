@@ -15,6 +15,22 @@ import okhttp3.Interceptor
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
 import java.net.URI
+import android.util.Log
+import com.lagradost.cloudstream3.APIHolder.unixTimeMS
+//import com.lagradost.cloudstream3.animeproviders.ZoroProvider
+import com.lagradost.cloudstream3.mvvm.suspendSafeApiCall
+import com.lagradost.cloudstream3.utils.*
+import com.lagradost.cloudstream3.utils.AppUtils
+import com.lagradost.cloudstream3.utils.AppUtils.toJson
+import kotlinx.coroutines.delay
+import okhttp3.RequestBody.Companion.toRequestBody
+import java.nio.charset.StandardCharsets
+import java.security.MessageDigest
+import java.util.*
+import javax.crypto.Cipher
+import javax.crypto.spec.IvParameterSpec
+import javax.crypto.spec.SecretKeySpec
+import kotlin.system.measureTimeMillis
 
 private const val OPTIONS = "OPTIONS"
 
@@ -151,11 +167,14 @@ class ZoroProvider : MainAPI() {
         val html = app.get(url).text
         val document = Jsoup.parse(html)
 
-        val syncData = tryParseJson<ZoroSyncData>(document.selectFirst("#syncData")?.data())
+        val syncData = AppUtils.tryParseJson<ZoroSyncData>(document.selectFirst("#syncData")?.data())
 
         val title = document.selectFirst(".anisc-detail > .film-name")?.text().toString()
         val poster = document.selectFirst(".anisc-poster img")?.attr("src")
         val tags = document.select(".anisc-info a[href*=\"/genre/\"]").map { it.text() }
+
+        val subEpisodes = ArrayList<Episode>()
+        val dubEpisodes = ArrayList<Episode>()
 
         var year: Int? = null
         var japaneseTitle: String? = null
@@ -186,11 +205,43 @@ class ZoroProvider : MainAPI() {
                     "$mainUrl/ajax/v2/episode/list/$animeId"
                 ).text
             ).html
-        ).select(".ss-list > a[href].ssl-item.ep-item").map {
-            newEpisode(it.attr("href")) {
-                this.name = it?.attr("title")
-                this.episode = it.selectFirst(".ssli-order")?.text()?.toIntOrNull()
+        ).select(".ss-list > a[href].ssl-item.ep-item").map { uno ->
+            val episodeID = uno.attr("href").split("=")[1]
+
+            val servers: List<Pair<String, String>> = Jsoup.parse(
+                app.get("$mainUrl/ajax/v2/episode/servers?episodeId=$episodeID")
+                    .parsed<Response>().html
+            ).select(".server-item[data-type][data-id]").map {
+                Pair(
+                    it.attr("data-type"),
+                    it.attr("data-id")
+                )
             }
+
+            val assa = servers.map {
+                val serverId = it.second
+                val dubstat  = it.first
+                val dataeps = "{\"server\":\"$serverId\",\"dubs\":\"$dubstat\"}"
+
+                if (dubstat.toString() == "sub") {
+                    subEpisodes.add(
+                        newEpisode(dataeps) {
+                            this.name = uno?.attr("title")
+                            this.episode = uno.selectFirst(".ssli-order")?.text()?.toIntOrNull()
+                        }
+                    )
+                }
+
+                if (dubstat.toString() == "dub") {
+                    dubEpisodes.add(
+                        newEpisode(dataeps) {
+                            this.name = uno?.attr("title")
+                            this.episode = uno.selectFirst(".ssli-order")?.text()?.toIntOrNull()
+                        }
+                    )
+                }
+            }
+
         }
 
         val actors = document.select("div.block-actors-content > div.bac-list-wrap > div.bac-item")
@@ -221,14 +272,13 @@ class ZoroProvider : MainAPI() {
                     if (epHref == null || epTitle == null || epPoster == null) {
                         null
                     } else {
-                        newAnimeSearchResponse(
+                        AnimeSearchResponse(
                             epTitle,
-                            epHref,
+                            fixUrl(epHref),
+                            this.name,
                             TvType.Anime,
-                            fix = true)
-                        {
-                            posterUrl = epPoster
-                            dubStatus = null}
+                            epPoster,
+                            dubStatus = null)
                     }
                 }
 
@@ -237,7 +287,8 @@ class ZoroProvider : MainAPI() {
             engName = title
             posterUrl = poster
             this.year = year
-            addEpisodes(DubStatus.Subbed, episodes)
+            addEpisodes(DubStatus.Dubbed, dubEpisodes)
+            addEpisodes(DubStatus.Subbed, subEpisodes)
             showStatus = status
             plot = description
             this.tags = tags
